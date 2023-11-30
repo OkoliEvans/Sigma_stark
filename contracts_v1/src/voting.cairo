@@ -26,6 +26,8 @@ mod Voting {
     use starknet::ContractAddress;
     use array::ArrayTrait;
     use super::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use alexandria_storage::list;
+    use alexandria_storage::list::{ IndexView };
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -68,7 +70,6 @@ mod Voting {
         end_time: u64,
         total_votes: u256,
         winning_vote: u256,
-        num_of_registered_candidates: u256,
         num_of_registered_voters: u256,
         token_id: u256,
         started: bool,
@@ -85,6 +86,8 @@ mod Voting {
         voters: LegacyMap::<ContractAddress, Voter>,
         ///@dev storage structs
         election: Election,
+        registered_candidates: List<ContractAddress>,
+        rc: list<ContractAddress>,
         ///@dev despatchers
         token: IERC20Dispatcher,
     }
@@ -174,7 +177,9 @@ mod Voting {
                 age, votes: 0, address, fullname, position, description, is_eligible: true,
             };
             self.candidates.write(address, candidate);
-            self.num_of_registered_candidates.write(self.num_of_registered_candidates.read() + 1);
+
+            let regd_cand = self.registered_candidates.append(address);
+            let mut regd_cand = self.rc.append(address);
 
             self.emit(NewCandidate { address, position });
         }
@@ -197,8 +202,6 @@ mod Voting {
                         is_eligible: false,
                     }
                 );
-
-            self.num_of_registered_candidates.write(self.num_of_registered_candidates.read() - 1);
 
             self.emit(NewCandidate { address: candidate, position: 'removed from contest', });
         }
@@ -228,9 +231,11 @@ mod Voting {
                 self.start_time.read() <= get_block_timestamp(), 'start_vote: not start time yet'
             );
             assert(end_time > self.start_time.read(), 'start_vote: invalid end time');
-            assert(self.num_of_registered_candidates.read() > 1, 'invalid no of candidates');
             assert(self.started.read() == false, 'start_vote: voting already on');
 
+            let regd_cands = self.registered_candidates.read();
+            assert(regd_cands.len() > 1, 'invalid no of candidates');
+            
             self.started.write(true);
         }
 

@@ -1,6 +1,6 @@
-#[starknet::interface]
 use starknet::ContractAddress;
 
+#[starknet::interface]
 trait IVotingTrait<TContractState> {
     fn get_total_votes(self: @TContractState) -> u256;
     fn add_candidate(

@@ -1,7 +1,7 @@
-#[starknet::interface]
 use starknet::ContractAddress;
 use array::ArrayTrait;
 
+#[starknet::interface]
 trait IVoteFactoryTrait<TContractState> {
     fn create_election(
         ref self: TContractState,

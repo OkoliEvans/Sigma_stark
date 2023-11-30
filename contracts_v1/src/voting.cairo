@@ -26,8 +26,8 @@ mod Voting {
     use starknet::ContractAddress;
     use array::ArrayTrait;
     use super::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use alexandria_storage::list;
-    use alexandria_storage::list::{ IndexView };
+    use alexandria_storage::list::List;
+    use alexandria_storage::list::{ IndexView, ListTrait };
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -87,7 +87,6 @@ mod Voting {
         ///@dev storage structs
         election: Election,
         registered_candidates: List<ContractAddress>,
-        rc: list<ContractAddress>,
         ///@dev despatchers
         token: IERC20Dispatcher,
     }
@@ -178,8 +177,8 @@ mod Voting {
             };
             self.candidates.write(address, candidate);
 
-            let regd_cand = self.registered_candidates.append(address);
-            let mut regd_cand = self.rc.append(address);
+            let mut regd_cand = self.registered_candidates.read();
+            regd_cand.append(address);
 
             self.emit(NewCandidate { address, position });
         }

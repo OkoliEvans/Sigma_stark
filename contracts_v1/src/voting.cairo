@@ -206,10 +206,8 @@ mod Voting {
         fn verify(ref self: ContractState, vote_id: felt252) {
             let (caller, address_this) = self.get_contract_details();
             let election_id_num = self.election_id.read();
-            let tokenise = self.token.read().balance_of(caller);
             assert(self.verified.read(caller) == false, 'verify: double verification');
             assert(election_id_num == vote_id, 'verify: incorrect id');
-            assert(tokenise > 0, 'no token pass');
 
             let voter = Voter { address: caller, is_verified: true, voted: false, };
 
@@ -250,7 +248,9 @@ mod Voting {
             let caller = get_caller_address();
             let uri = self.token_uri.read();
             let token_id = self.token_id.read() + 1;
+            let tokenise = self.token.read().balance_of(caller);
 
+            assert(tokenise > 0, 'no token pass');
             assert(self.started.read() == true, 'vote: voting not in session');
             assert(self.verified.read(caller) == true, 'vote: unverified');
             assert(self.voted.read(caller) == false, 'vote: voted');
@@ -291,29 +291,29 @@ mod Voting {
 
             self.votes_per_candidate.write(candidate, candidate_votes + 1);
 
-            self._set_winner();
+            // self._set_winner();
 
             self.emit(Voted { voter: caller, candidate, });
         }
 
-        fn _set_winner(ref self: ContractState ) -> Candidate {
-            let mut winning_vote = ArrayTrait::new();
-            // let mut candidate: ContractAddress = self.candidates.read()
-            let mut i: u256 = 0;
+        // fn _set_winner(ref self: ContractState ) -> Candidate {
+        //     let mut winning_vote = ArrayTrait::new();
+        //     // let mut candidate: ContractAddress = self.candidates.read()
+        //     let mut i: u256 = 0;
 
-            ///TODO
-            loop {
-                if i > self.num_of_registered_candidates.read() {
-                    break;
-                }
-                i += 1;
-                if self.votes_per_candidate.read(candidate) > i {
-                    winning_vote.append(self.votes_per_candidate.read(candidate));
-                }
-            };
+        //     ///TODO
+        //     loop {
+        //         if i > self.num_of_registered_candidates.read() {
+        //             break;
+        //         }
+        //         i += 1;
+        //         if self.votes_per_candidate.read(candidate) > i {
+        //             winning_vote.append(self.votes_per_candidate.read(candidate));
+        //         }
+        //     };
 
-            return self.candidates.;
-        }
+        //     return self.candidates.;
+        // }
 
         fn get_contract_details(self: @ContractState) -> (ContractAddress, ContractAddress) {
             let caller = get_caller_address();

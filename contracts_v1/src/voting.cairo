@@ -21,13 +21,14 @@ trait IERC20<T> {
 mod Voting {
     ///     USE SOULBOUND TOKEN AS PASS
     use core::starknet::event::EventEmitter;
-    use starknet::{get_caller_address, get_contract_address, Zeroable, get_block_timestamp};
+    use starknet::{
+        get_caller_address, get_contract_address, Zeroable, get_block_timestamp, TryInto
+    };
     use contracts_v1::voting_interface::IVotingTrait;
     use starknet::ContractAddress;
     use array::ArrayTrait;
     use super::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use alexandria_storage::list::List;
-    use alexandria_storage::list::{ IndexView, ListTrait };
+    use alexandria_storage::list::{IndexView, ListTrait, List};
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -65,11 +66,10 @@ mod Voting {
     struct Storage {
         moderator: ContractAddress,
         overseer: ContractAddress,
-        winner: ContractAddress,
         start_time: u64,
         end_time: u64,
         total_votes: u256,
-        winning_vote: u256,
+        winning_vote: u32,
         num_of_registered_voters: u256,
         token_id: u256,
         started: bool,
@@ -81,11 +81,12 @@ mod Voting {
         verified: LegacyMap::<ContractAddress, bool>,
         voted: LegacyMap::<ContractAddress, bool>,
         is_eligible: LegacyMap::<ContractAddress, bool>,
-        votes_per_candidate: LegacyMap::<ContractAddress, u256>,
+        votes_per_candidate: LegacyMap::<ContractAddress, u32>,
         candidates: LegacyMap::<ContractAddress, Candidate>,
         voters: LegacyMap::<ContractAddress, Voter>,
         ///@dev storage structs
         election: Election,
+        winner: Candidate,
         registered_candidates: List<ContractAddress>,
         ///@dev despatchers
         token: IERC20Dispatcher,
@@ -234,7 +235,7 @@ mod Voting {
 
             let regd_cands = self.registered_candidates.read();
             assert(regd_cands.len() > 1, 'invalid no of candidates');
-            
+
             self.started.write(true);
         }
 
@@ -295,29 +296,33 @@ mod Voting {
 
             self.votes_per_candidate.write(candidate, candidate_votes + 1);
 
-            // self._set_winner();
+            self._set_winner();
 
             self.emit(Voted { voter: caller, candidate, });
         }
 
-        // fn _set_winner(ref self: ContractState ) -> Candidate {
-        //     let mut winning_vote = ArrayTrait::new();
-        //     // let mut candidate: ContractAddress = self.candidates.read()
-        //     let mut i: u256 = 0;
+        fn _set_winner(ref self: ContractState) -> Candidate {
+            let mut winning_vote = 0;
+            let mut i: u32 = 0;
+            let mut candidates_core = self.registered_candidates.read();
+            let mut true_winner = self.candidates.read(candidates_core[i]);
 
-        //     ///TODO
-        //     loop {
-        //         if i > self.num_of_registered_candidates.read() {
-        //             break;
-        //         }
-        //         i += 1;
-        //         if self.votes_per_candidate.read(candidate) > i {
-        //             winning_vote.append(self.votes_per_candidate.read(candidate));
-        //         }
-        //     };
+            ///TODO
+            loop {
+                if i >= candidates_core.len() {
+                    break;
+                }
 
-        //     return self.candidates.;
-        // }
+                if self.votes_per_candidate.read(candidates_core[i]) > i {
+                    winning_vote = self.votes_per_candidate.read(candidates_core[i]);
+                    self.winning_vote.write(winning_vote);
+                    true_winner = self.candidates.read(candidates_core[i]);
+                }
+
+                i += 1;
+            };
+            true_winner
+        }
 
         fn get_contract_details(self: @ContractState) -> (ContractAddress, ContractAddress) {
             let caller = get_caller_address();

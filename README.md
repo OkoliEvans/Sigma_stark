@@ -62,9 +62,15 @@ We will keep building and updating the algorithms of the system as we monitor ho
 
 ## Developers
 
-In the hallowed spirit of open source that is the tradition of web3 builders, the Sigma team is making this entire codebase open source. In the coming days, the folders housing both frontend and backend systems will be updated with the necessary tools, links and cli to successfully install, simulate and run the Sigma base locally.
+In the hallowed spirit of open source that is the tradition of web3 builders, the Sigma team is making this entire codebase open source. 
 
-In the meantime, we welcome PRs or issues from everyone that will help to improve the system, we apreciate especially PRs that will pinpoint bugs in the smart contracts, and of course in the other codes as well :)
+Make sure you have scarb and other necessary tools installed. If you are new to Starknet, you can get started with the tools here: https://book.starknet.io/ch02-01-basic-installation.html  
+
+Clone this repository into your local machine: ```git clone https://github.com/OkoliEvans/Sigma_stark.git && cd Sigma_stark```
+
+Run ```scarb build``` to build the program, and then you can continue on your machine.
+
+We highly appreciate and welcome pull requests or issues from everyone that will help to improve the system, we apreciate especially PRs that will pinpoint bugs in the smart contracts, and of course in the other codes as well :)
 
 <br/>
 

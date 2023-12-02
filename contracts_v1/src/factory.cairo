@@ -146,6 +146,12 @@ mod factory {
             assert(!new_mod.is_zero(), 'Zero address err');
             self.moderator.write(new_mod);
         }
+
+        fn update_classhash(ref self: ContractState, classhash: ClassHash) {
+            let caller: ContractAddress = get_caller_address();
+            assert(caller == self.moderator.read(), 'unauthorized caller');
+            self.voting_classhash.write(classhash);
+        }
     }
     #[external(v0)]
     fn return_contest(self: @ContractState, vote_id: felt252) -> Contest {

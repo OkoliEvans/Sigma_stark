@@ -66,6 +66,7 @@ mod Voting {
     struct Storage {
         moderator: ContractAddress,
         overseer: ContractAddress,
+        winner_address: ContractAddress,
         start_time: u64,
         end_time: u64,
         total_votes: u256,
@@ -203,6 +204,8 @@ mod Voting {
                     }
                 );
 
+            // let redg_cand = self.registered_candidates.read();
+
             self.emit(NewCandidate { address: candidate, position: 'removed from contest', });
         }
 
@@ -268,12 +271,18 @@ mod Voting {
         fn get_total_votes(self: @ContractState) -> u256 {
             self.total_votes.read()
         }
+        
+        fn get_overseer(self: @ContractState) -> ContractAddress {
+            self.overseer.read()
+        }
     }
 
-    // #[external(v0)]
-    //     fn display_winner(self: @ContractState) -> Candidate {
-    //         return Candidate // FIX
-    //     }
+
+    #[external(v0)]
+    fn display_winner(self: @ContractState) -> Candidate {
+        let true_winner = self.winner_address.read();
+        self.candidates.read(true_winner)
+    }
 
     #[external(v0)]
     fn display_election(self: @ContractState) -> Election {
@@ -316,6 +325,7 @@ mod Voting {
                 if self.votes_per_candidate.read(candidates_core[i]) > i {
                     winning_vote = self.votes_per_candidate.read(candidates_core[i]);
                     self.winning_vote.write(winning_vote);
+                    self.winner_address.write(candidates_core[i]);
                     true_winner = self.candidates.read(candidates_core[i]);
                 }
 

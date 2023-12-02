@@ -1,4 +1,4 @@
-use starknet::ContractAddress;
+use starknet::{ContractAddress, ClassHash};
 use array::ArrayTrait;
 
 #[starknet::interface]
@@ -18,4 +18,5 @@ trait IVoteFactoryTrait<TContractState> {
     fn return_election_id(self: @TContractState, voting_addr: ContractAddress) -> felt252;
     fn change_moderator(ref self: TContractState, new_mod: ContractAddress);
     fn return_elections(self: @TContractState, vote_id: felt252) -> Array<ContractAddress>;
+    fn update_classhash(ref self: TContractState, classhash: ClassHash);
 }

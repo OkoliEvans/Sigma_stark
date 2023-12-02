@@ -10,7 +10,7 @@ trait IERC20<T> {
     fn symbol(self: @T) -> felt252;
 
     /// @dev Function that returns decimal of token
-    fn decimals(self: @T) -> u8;
+    fn decimals(self: @T) -> u256;
 
     /// @dev Function that returns total supply of token
     fn total_supply(self: @T) -> u256;
@@ -55,12 +55,13 @@ mod ERC20 {
     use starknet::contract_address_const;
     use starknet::Zeroable;
     use integer::BoundedU256;
+    use alexandria_math::armstrong_number::pow;
 
     #[storage]
     struct Storage {
         name: felt252,
         symbol: felt252,
-        decimal: u8,
+        decimal: u256,
         owner: ContractAddress,
         total_supply: u256, // how do I add the decimal to total supply
         num_of_transfers: u8,
@@ -94,7 +95,7 @@ mod ERC20 {
         ref self: ContractState,
         _name: felt252,
         _symbol: felt252,
-        _decimal: u8,
+        decimal: u256,
         initial_supply: u256,
         recipient: ContractAddress
     ) {
@@ -102,7 +103,7 @@ mod ERC20 {
 
         self.name.write(_name);
         self.symbol.write(_symbol);
-        self.decimal.write(_decimal);
+        self.decimal.write(decimal);
         self.owner.write(_owner);
         self._mint(recipient, initial_supply);
     }
@@ -125,7 +126,7 @@ mod ERC20 {
         }
 
 
-        fn decimals(self: @ContractState) -> u8 {
+        fn decimals(self: @ContractState) -> u256 {
             self.decimal.read()
         }
 
@@ -245,18 +246,20 @@ mod ERC20 {
             receiver: ContractAddress,
             amount: u256
         ) {
+            let dec = self.decimal.read() * 10;
+            let supply_exp_dec = pow(amount, dec);
+
             if (sender.is_zero()) {
-                self.total_supply.write(self.total_supply.read() + amount);
+                self.total_supply.write(self.total_supply.read() + supply_exp_dec);
             } else if (self.num_of_transfers.read() < 4) {
                 self.balances.write(sender, (self.balances.read(sender) - amount));
                 self.num_of_transfers.write(self.num_of_transfers.read() + 1);
             }
 
             if (receiver.is_zero()) {
-                self.total_supply.write(self.total_supply.read() - amount);
+                self.total_supply.write(self.total_supply.read() - supply_exp_dec);
             } else {
                 self.balances.write(receiver, (self.balances.read(receiver) + amount));
-            // self.num_of_transfers.write(self.num_of_transfers.read() + 1);
             }
 
             self.emit(Transfer { sender, receiver, amount });

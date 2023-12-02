@@ -16,6 +16,7 @@ trait IVotingTrait<TContractState> {
     fn start_vote(ref self: TContractState, end_time: u64);
     fn end_vote(ref self: TContractState);
     fn vote(ref self: TContractState, candidate: ContractAddress);
+    fn get_overseer(self: @TContractState) -> ContractAddress;
 // fn display_winner(self: @TContractState) -> felt252;
 // fn votes_per_candidate(self: @TContractState) -> u256;
 // fn display_election(self: @TContractState) -> <T>;

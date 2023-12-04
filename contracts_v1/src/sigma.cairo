@@ -99,12 +99,12 @@ mod ERC20 {
         initial_supply: u256,
         recipient: ContractAddress
     ) {
-        let _owner: ContractAddress = get_caller_address();
+        let owner: ContractAddress = get_caller_address();
 
         self.name.write(_name);
         self.symbol.write(_symbol);
         self.decimal.write(decimal);
-        self.owner.write(_owner);
+        self.owner.write(owner);
         self._mint(recipient, initial_supply);
     }
 
@@ -161,8 +161,8 @@ mod ERC20 {
         //                     MUTABLE   FUNCTIONS                        //
         ////////////////////////////////////////////////////////////////////
         fn approve(ref self: ContractState, spender: ContractAddress, amount: u256) {
-            let _owner: ContractAddress = get_caller_address();
-            self._approve(_owner, spender, amount);
+            let owner: ContractAddress = get_caller_address();
+            self._approve(owner, spender, amount);
         }
 
 
@@ -196,16 +196,16 @@ mod ERC20 {
 
         fn mint(ref self: ContractState, to: ContractAddress, amount: u256) {
             let caller: ContractAddress = get_caller_address();
-            let _owner: ContractAddress = self.owner.read();
-            assert(caller == _owner, 'Unauthorized caller');
+            let owner: ContractAddress = self.owner.read();
+            assert(caller == owner, 'Unauthorized caller');
             self._mint(to, amount);
         }
 
 
         fn burn(ref self: ContractState, from: ContractAddress, amount: u256) {
             let caller = get_caller_address();
-            let _owner = self.owner.read();
-            assert(caller == _owner, 'Unauthorized caller');
+            let owner = self.owner.read();
+            assert(caller == owner, 'Unauthorized caller');
             self._burn(from, amount);
         }
     }
@@ -230,13 +230,13 @@ mod ERC20 {
 
 
         fn _approve(
-            ref self: ContractState, owner_: ContractAddress, spender: ContractAddress, amount: u256
+            ref self: ContractState, owner: ContractAddress, spender: ContractAddress, amount: u256
         ) {
-            assert(!owner_.is_zero(), 'ERC20: Approve from 0');
+            assert(!owner.is_zero(), 'ERC20: Approve from 0');
             assert(!spender.is_zero(), 'ERC20: Approve to 0');
-            self.allowances.write((owner_, spender), amount);
+            self.allowances.write((owner, spender), amount);
 
-            self.emit(Approval { owner: owner_, receiver: spender, amount });
+            self.emit(Approval { owner, receiver: spender, amount });
         }
 
 

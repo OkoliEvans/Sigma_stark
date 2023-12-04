@@ -42,14 +42,14 @@ mod factory {
         moderator: ContractAddress,
         token: IERC20Dispatcher,
         num_of_elections: u256,
-        election_to_id: LegacyMap::<ContractAddress, felt252>,
-        contest_to_id: LegacyMap::<felt252, Contest>,
-        election_addresses: LegacyMap::<felt252, ContractAddress>,
+        election_to_id: LegacyMap::<ContractAddress, u256>,
+        contest_to_id: LegacyMap::<u256, Contest>,
+        election_addresses: LegacyMap::<u256, ContractAddress>,
     }
 
     #[derive(Copy, Drop, Serde, starknet::Store)]
     struct Contest {
-        vote_id: felt252,
+        vote_id: u256,
         is_id_registered: bool,
         overseer: ContractAddress,
         election: ContractAddress,
@@ -73,10 +73,7 @@ mod factory {
     impl VoteFactoryImpl of IVoteFactoryTrait<ContractState> {
         fn create_election(
             ref self: ContractState,
-            vote_id: felt252,
-            name: felt252,
-            symbol: felt252,
-            token_uri: felt252,
+            vote_id: u256,
             contest: felt252,
             start: u64,
             token: ContractAddress,
@@ -86,14 +83,10 @@ mod factory {
 
             assert(vote_id != contest_lit.vote_id, 'ID taken');
             assert(get_block_timestamp() < start, 'Invalid start time');
-            assert(token_uri != '', 'Empty token uri');
 
             let mut constructor_calldata = ArrayTrait::new();
             get_caller_address().serialize(ref constructor_calldata);
             vote_id.serialize(ref constructor_calldata);
-            name.serialize(ref constructor_calldata);
-            symbol.serialize(ref constructor_calldata);
-            token_uri.serialize(ref constructor_calldata);
             contest.serialize(ref constructor_calldata);
             self.moderator.read().serialize(ref constructor_calldata);
             start.serialize(ref constructor_calldata);
@@ -123,16 +116,16 @@ mod factory {
             return voting_addr;
         }
 
-        fn return_election_id(self: @ContractState, voting_addr: ContractAddress) -> felt252 {
+        fn return_election_id(self: @ContractState, voting_addr: ContractAddress) -> u256 {
             self.election_to_id.read(voting_addr)
         }
 
-        fn return_elections(self: @ContractState, vote_id: felt252) -> Array<ContractAddress> {
+        fn return_elections(self: @ContractState, vote_id: u256) -> Array<ContractAddress> {
             let mut election_address = ArrayTrait::new();
-            let mut i: felt252 = 1;
+            let mut i: u256 = 0;
 
             loop {
-                if self.num_of_elections.read() < 1 {
+                if self.num_of_elections.read() < i {
                     break;
                 }
                 election_address.append(self.election_addresses.read(i));
@@ -154,7 +147,7 @@ mod factory {
         }
     }
     #[external(v0)]
-    fn return_contest(self: @ContractState, vote_id: felt252) -> Contest {
+    fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
         self.contest_to_id.read(vote_id)
     }
 }

@@ -72,12 +72,9 @@ mod Voting {
         total_votes: u256,
         winning_vote: u32,
         num_of_registered_voters: u256,
-        token_id: u256,
+        num_of_regd_candidates: u256,
         started: bool,
-        name: felt252,
-        symbol: felt252,
         election_id: felt252,
-        token_uri: felt252,
         ///@dev mappings
         verified: LegacyMap::<ContractAddress, bool>,
         voted: LegacyMap::<ContractAddress, bool>,
@@ -117,8 +114,8 @@ mod Voting {
         start_time: u256,
         end_time: u256,
         contest: felt252,
-        uri: felt252,
-        baseuri: felt252,
+        // uri: felt252,
+        // baseuri: felt252,
         started: bool,
     }
 
@@ -127,9 +124,6 @@ mod Voting {
         ref self: ContractState,
         overseer: ContractAddress,
         election_id: felt252,
-        token_name: felt252,
-        symbol: felt252,
-        uri: felt252,
         contest: felt252,
         moderator: ContractAddress,
         start: u64,
@@ -145,10 +139,7 @@ mod Voting {
         self.overseer.write(overseer);
 
         self.election_id.write(election_id);
-        self.name.write(token_name);
-        self.symbol.write(symbol);
         self.start_time.write(start);
-        self.token_uri.write(uri);
         self.token.write(IERC20Dispatcher { contract_address: _token });
     }
 
@@ -178,7 +169,7 @@ mod Voting {
                 age, votes: 0, address, fullname, position, description, is_eligible: true,
             };
             self.candidates.write(address, candidate);
-
+            self.num_of_regd_candidates.write( self.num_of_regd_candidates.read() + 1 );
             let mut regd_cand = self.registered_candidates.read();
             regd_cand.append(address);
 
@@ -204,8 +195,10 @@ mod Voting {
                     }
                 );
 
-            // let redg_cand = self.registered_candidates.read();
+            let mut i = 0;
+            
 
+            self.num_of_regd_candidates.write( self.num_of_regd_candidates.read() - 1 );
             self.emit(NewCandidate { address: candidate, position: 'removed from contest', });
         }
 
@@ -254,8 +247,6 @@ mod Voting {
 
         fn vote(ref self: ContractState, candidate: ContractAddress) {
             let caller = get_caller_address();
-            let uri = self.token_uri.read();
-            let token_id = self.token_id.read() + 1;
             let tokenise = self.token.read().balance_of(caller);
 
             assert(tokenise > 0, 'no token pass');
@@ -274,6 +265,10 @@ mod Voting {
         
         fn get_overseer(self: @ContractState) -> ContractAddress {
             self.overseer.read()
+        }
+
+        fn get_total_candidates(self: @ContractState) -> u256 {
+            self.num_of_regd_candidates.read()
         }
     }
 
@@ -316,7 +311,6 @@ mod Voting {
             let mut candidates_core = self.registered_candidates.read();
             let mut true_winner = self.candidates.read(candidates_core[i]);
 
-            ///TODO
             loop {
                 if i >= candidates_core.len() {
                     break;

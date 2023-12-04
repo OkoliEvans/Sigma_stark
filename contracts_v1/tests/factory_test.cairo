@@ -1,3 +1,4 @@
+use core::option::OptionTrait;
 use snforge_std::{declare, ContractClassTrait, start_prank, stop_prank, start_warp, env::var};
 use array::ArrayTrait;
 use serde::Serde;
@@ -18,17 +19,17 @@ fn deploy_contract(name: felt252, owner: ContractAddress) -> ContractAddress {
     let token: ContractAddress = 0x01966be6e5ea707257fc8ac10a7900247941d45f29cf83cd6a67f08126ecdf93
         .try_into()
         .unwrap();
+    let moderator = 0x0719947d6faa0cb9a9794d6442947cc30e2aa198e92f3fb30f875354e167f4e7.try_into().unwrap();
 
     let contract = declare(name);
     let mut calldata = ArrayTrait::new();
     voting_classhash.serialize(ref calldata);
     token.serialize(ref calldata);
-    owner.serialize(ref calldata);
 
     // Precalculate the address to obtain the contract address before the constructor call (deploy) itself
     let contract_address = contract.precalculate_address(@calldata);
 
-    start_prank(contract_address, owner.try_into().unwrap());
+    start_prank(contract_address, moderator);
     let deployed_contract = contract.deploy(@calldata).unwrap();
     stop_prank(contract_address);
 
@@ -62,20 +63,15 @@ fn test_create_election() {
     let contract_address = deploy_contract('factory', address_this);
     let factory_dispatcher = IVoteFactoryTraitDispatcher { contract_address };
     let token_supply = 1_000_000_000;
-    let vote_id = 1;
-    let name = 'NPE';
-    let symbol = 'NXT';
+    let vote_id = 145;
     let contest = 'Presidential election 2023';
     let start = 1701560434;
     let end: u64 = 1701733234;
-    let token_uri = 'tyty';
 
-    start_prank(contract_address, caller);
+
     let election_1 = factory_dispatcher
-        .create_election(vote_id, name, symbol, token_uri, contest, start, token, token_supply);
-    let voting_dispatcher = IVotingTraitDispatcher { contract_address: election_1 };
-    let start_time = voting_dispatcher.start_vote(end);
-    stop_prank(contract_address);
-// assert(start_time == end, 'incorrect time');
+        .create_election(vote_id, contest, start, token, token_supply);
+    
+    let id = factory_dispatcher.return_election_id(election_1);
+    assert(id == 145, 'Incorrect num of elections');
 }
-

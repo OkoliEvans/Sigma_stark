@@ -18,9 +18,6 @@ fn deploy_contract(
     name: felt252,
     overseer: ContractAddress,
     election_id: felt252,
-    token_name: felt252,
-    symbol: felt252,
-    uri: felt252,
     contest: felt252,
     moderator: ContractAddress,
     start: u64,
@@ -30,9 +27,6 @@ fn deploy_contract(
     let mut calldata = ArrayTrait::new();
     overseer.serialize(ref calldata);
     election_id.serialize(ref calldata);
-    token_name.serialize(ref calldata);
-    symbol.serialize(ref calldata);
-    uri.serialize(ref calldata);
     contest.serialize(ref calldata);
     moderator.serialize(ref calldata);
     start.serialize(ref calldata);
@@ -63,15 +57,175 @@ fn get_addresses() -> (ContractAddress, ContractAddress, ContractAddress,) {
 fn test_add_candidate() {
     let (caller, token, address_this) = get_addresses();
     let age = 50;
-    let address_caller = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d;
+    let address_caller = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+    let candidate_addr = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d
+        .try_into()
+        .unwrap();
     let fullname = 'Olugbenga Daniel';
     let position = 'President';
     let description = 'Outspoken, humble';
     let start = 1701560434;
 
-    let contract_address = deploy_contract('Voting', address_this, 'NPE21', 'NigPE2023', 'INEC23', 'qicdiiid', 'Presidential election', caller, start, token);
-    let voting_dispatcher = IVotingTraitDispatcher {contract_address};
-    let overseer: ContractAddress = voting_dispatcher.get_overseer();
+    let contract_address = deploy_contract(
+        'Voting', address_caller, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
 
-    assert(overseer == address_this, 'Unexpected overseer');
+    start_prank(contract_address, address_caller);
+    voting_dispatcher.add_candidate(age, candidate_addr, fullname, position, description);
+    stop_prank(contract_address);
+
+    let total_candidates = voting_dispatcher.get_total_candidates();
+    assert(total_candidates == 1, 'incorrect candidates num');
+}
+
+#[test]
+fn test_remove_candidate() {
+    let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+    let (caller, token, address_this) = get_addresses();
+    let start = 1701560434;
+    let contract_address = deploy_contract(
+        'Voting', address_overseer, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let candidate_addr = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d
+        .try_into()
+        .unwrap();
+    let fullname = 'Olugbenga Daniel';
+    let position = 'President';
+    let description = 'Outspoken, humble';
+
+    start_prank(contract_address, address_overseer);
+    voting_dispatcher.add_candidate(67, candidate_addr, fullname, position, description);
+    stop_prank(contract_address);
+
+    start_prank(contract_address, address_overseer);
+    voting_dispatcher.remove_candidate(candidate_addr);
+    stop_prank(contract_address);
+
+    let total_candidates = voting_dispatcher.get_total_candidates();
+    assert(total_candidates == 0, 'incorrect candidates num');
+}
+
+#[test]
+fn test_verify() {
+    let (caller, token, address_this) = get_addresses();
+    let address_caller = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+
+    let start = 1701560434;
+    let contract_address = deploy_contract(
+        'Voting', address_caller, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let IERC20 = IERC20Dispatcher { contract_address: token };
+
+    voting_dispatcher.verify('NPE21');
+
+    assert(IERC20.balance_of(caller) == 1, 'SBT not transferred');
+}
+
+#[test]
+fn test_vote() {
+    let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+    let (caller, token, address_this) = get_addresses();
+    let start = 1709560434;
+    let end = 1711560434;
+    let contract_address = deploy_contract(
+        'Voting', address_overseer, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let candidate_addr = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d
+        .try_into()
+        .unwrap();
+
+    voting_dispatcher.verify('NPE21');
+    
+    start_prank(contract_address, address_overseer);
+    voting_dispatcher.start_vote(end);
+    stop_prank(contract_address);
+
+    voting_dispatcher.vote(candidate_addr);
+    
+    let total_votes = voting_dispatcher.get_total_votes();
+    assert(total_votes == 1, 'Incorrect num of votes');
+}
+
+#[test]
+#[should_panic (expected: ('Voter not verified', ))]
+fn test_vote_backdoor() {
+    let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+    let (caller, token, address_this) = get_addresses();
+    let start = 1709560434;
+    let end = 1711560434;
+    let contract_address = deploy_contract(
+        'Voting', address_overseer, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let candidate_addr = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d
+        .try_into()
+        .unwrap();
+
+    start_prank(contract_address, address_overseer);
+    voting_dispatcher.start_vote(end);
+    stop_prank(contract_address);
+
+    voting_dispatcher.vote(candidate_addr);
+    
+    let total_votes = voting_dispatcher.get_total_votes();
+    assert(total_votes == 1, 'Incorrect num of votes');
+}
+
+
+
+#[test]
+#[should_panic (expected: ('verify unsuccessful', ))]
+fn test_verify_faux() {
+    let (caller, token, address_this) = get_addresses();
+    let address_caller = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+
+    let start = 1701560434;
+    let contract_address = deploy_contract(
+        'Voting', address_caller, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let IERC20 = IERC20Dispatcher { contract_address: token };
+
+    voting_dispatcher.verify('NPE21');
+
+    assert(IERC20.balance_of(caller) == 0, 'SBT really transferred');
+}
+
+#[test]
+#[should_panic (expected: ('Vote not started', ))]
+fn test_vote_faux() {
+    let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
+        .try_into()
+        .unwrap();
+    let (caller, token, address_this) = get_addresses();
+    let start = 1709560434;
+    let end = 1711560434;
+    let contract_address = deploy_contract(
+        'Voting', address_overseer, 'NPE21', 'Presidential election', caller, start, token
+    );
+    let voting_dispatcher = IVotingTraitDispatcher { contract_address };
+    let candidate_addr = 0x06754dbca5be2db479ddeeab1a743f3d950854ac23ad4e0d43f96b4c57dde73d
+        .try_into()
+        .unwrap();
+
+    voting_dispatcher.vote(candidate_addr);
+    
+    let total_votes = voting_dispatcher.get_total_votes();
+    assert(total_votes == 0, 'Rigged');
 }

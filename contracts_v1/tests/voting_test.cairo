@@ -1,6 +1,8 @@
 use core::result::ResultTrait;
 use core::option::OptionTrait;
-use snforge_std::{declare, ContractClassTrait, start_prank, stop_prank, start_warp, env::var};
+use snforge_std::{
+    declare, ContractClassTrait, start_prank, stop_prank, start_warp, stop_warp, env::var
+};
 use array::ArrayTrait;
 use serde::Serde;
 use traits::TryInto;
@@ -112,6 +114,7 @@ fn test_remove_candidate() {
 }
 
 #[test]
+#[fork("goerli")]
 fn test_verify() {
     let (caller, token, address_this) = get_addresses();
     let address_caller = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
@@ -131,6 +134,7 @@ fn test_verify() {
 }
 
 #[test]
+#[fork("goerli")]
 fn test_vote() {
     let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
         .try_into()
@@ -147,20 +151,25 @@ fn test_vote() {
         .unwrap();
 
     voting_dispatcher.verify('NPE21');
-    
+
     start_prank(contract_address, address_overseer);
+    start_warp(contract_address, 17095604346);
     voting_dispatcher.start_vote(end);
     stop_prank(contract_address);
 
     voting_dispatcher.vote(candidate_addr);
-    
+
     let total_votes = voting_dispatcher.get_total_votes();
     assert(total_votes == 1, 'Incorrect num of votes');
 }
 
 #[test]
-#[should_panic (expected: ('Voter not verified', ))]
+#[fork("goerli")]
+#[should_panic(expected: ('Voter not verified',))]
 fn test_vote_backdoor() {
+    let fullname = 'Olugbenga Daniel';
+    let position = 'President';
+    let description = 'Outspoken, humble';
     let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
         .try_into()
         .unwrap();
@@ -176,19 +185,21 @@ fn test_vote_backdoor() {
         .unwrap();
 
     start_prank(contract_address, address_overseer);
+    voting_dispatcher.add_candidate(67, candidate_addr, fullname, position, description);
+    start_warp(contract_address, 17095604346);
     voting_dispatcher.start_vote(end);
     stop_prank(contract_address);
 
     voting_dispatcher.vote(candidate_addr);
-    
+
     let total_votes = voting_dispatcher.get_total_votes();
-    assert(total_votes == 1, 'Incorrect num of votes');
+    assert(total_votes == 0, 'Incorrect num of votes');
 }
 
 
-
 #[test]
-#[should_panic (expected: ('verify unsuccessful', ))]
+#[fork("goerli")]
+#[should_panic(expected: ('verify unsuccessful',))]
 fn test_verify_faux() {
     let (caller, token, address_this) = get_addresses();
     let address_caller = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
@@ -208,7 +219,8 @@ fn test_verify_faux() {
 }
 
 #[test]
-#[should_panic (expected: ('Vote not started', ))]
+#[fork("goerli")]
+#[should_panic(expected: ('Vote not started',))]
 fn test_vote_faux() {
     let address_overseer = 0x044c233c3c8092CEa7921EA9E748ec79696554047652B9e74Dc3295734e54DB5
         .try_into()
@@ -225,7 +237,7 @@ fn test_vote_faux() {
         .unwrap();
 
     voting_dispatcher.vote(candidate_addr);
-    
+
     let total_votes = voting_dispatcher.get_total_votes();
     assert(total_votes == 0, 'Rigged');
 }

@@ -85,6 +85,7 @@ mod Voting {
         ///@dev storage structs
         election: Election,
         winner: Candidate,
+        candidate: Candidate,
         registered_candidates: List<ContractAddress>,
         ///@dev despatchers
         token: IERC20Dispatcher,
@@ -196,7 +197,22 @@ mod Voting {
                 );
 
             let mut i = 0;
-            
+            let mut target_candidate = self.candidate.read().address;
+            let mut regd_cands = self.registered_candidates.read();
+
+    // loop to return the index of candidate and pop out the candidate from list
+            loop {
+                if i > regd_cands.len() {
+                    break;
+                }
+                if candidate == regd_cands[i] {
+                    target_candidate = regd_cands[i];
+                    regd_cands.set(0, target_candidate);
+                    regd_cands.pop_front();
+                }
+                i += 1;
+
+            };
 
             self.num_of_regd_candidates.write( self.num_of_regd_candidates.read() - 1 );
             self.emit(NewCandidate { address: candidate, position: 'removed from contest', });

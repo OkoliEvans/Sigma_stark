@@ -18,4 +18,9 @@ sierra = true
 [[target.starknet-contract]]
 casm = true
 
+[[tool.snforge.fork]]
+name = "goerli"
+url = "https://starknet-goerli.infura.io/v3/c6ec1f325c87417db37763e396efa0e2"
+block_id.tag = "Latest"
+
 RUST_BACKTRACE=1

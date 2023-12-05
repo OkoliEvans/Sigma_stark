@@ -58,6 +58,7 @@ fn test_deploy() {
 }
 
 #[test]
+#[fork("goerli")]
 fn test_create_election() {
     let (caller, token, address_this) = get_addresses();
     let contract_address = deploy_contract('factory', address_this);

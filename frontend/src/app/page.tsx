@@ -16,7 +16,6 @@ export default function Home() {
       <div className="flex bg-[#f7ebeb] sm:px-16 px-6 justify-center items-start">
         <div className="xl:max-w-[1280px] w-full">
           <Business />
-
           <Works />
           <Features />
         </div>

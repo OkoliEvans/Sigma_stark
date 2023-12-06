@@ -41,8 +41,12 @@ const CreateInterface = () => {
                   Vote ID:
                   <br />
                   <input
-                    className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2 "
+                    className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2 appearance-none"
                     type="number"
+                    style={{
+                      WebkitAppearance: "none",
+                      MozAppearance: "textfield",
+                    }}
                     placeholder="Enter your Vote ID"
                     onChange={(e) => setid(e.target.value)}
                   />

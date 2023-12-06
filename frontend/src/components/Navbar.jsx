@@ -11,7 +11,7 @@ import { IoCloseCircle } from "react-icons/io5";
 import { IoExit } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import { IconContext } from "react-icons";
-import { connect, disconnect } from "starknetkit";
+import { useWallet } from "../context/WalletContext";
 
 const Navbar = () => {
   let Anchors = [
@@ -21,27 +21,8 @@ const Navbar = () => {
     { name: "Docs", address: "/docs" },
   ];
 
-  const [connection, setConnection] = useState();
-  const [address, setAddress] = useState();
-  const [account, setAccount] = useState();
-
-  const connectWallet = async () => {
-    const connection = await connect();
-
-    if (connection && connection.isConnected) {
-      setConnection(connection);
-      setAccount(connection.account);
-      setAddress(connection.selectedAddress);
-    }
-  };
-
-  const disconnectWallet = async () => {
-    await disconnect();
-
-    setConnection(undefined);
-    setAccount(undefined);
-    setAddress("");
-  };
+  const { connection, address, connectWallet, account, disconnectWallet } =
+    useWallet();
 
   const router = useRouter();
 

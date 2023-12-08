@@ -8,7 +8,6 @@ trait IVoteFactoryTrait<TContractState> {
         vote_id: u256,
         contest: felt252,
         start: u64,
-        token: ContractAddress,
         token_supply: u256
     ) -> ContractAddress;
 

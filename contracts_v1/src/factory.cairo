@@ -58,12 +58,12 @@ mod factory {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, token_address: ContractAddress, voting_classhash: ClassHash
+        ref self: ContractState, token_address: ContractAddress, voting_classhash: ClassHash, moderator: ContractAddress
     ) {
-        let caller: ContractAddress = get_caller_address();
+     
         assert(token_address.is_non_zero(), 'const: Zero address for token');
 
-        self.moderator.write(caller);
+        self.moderator.write(moderator);
         self.token.write(IERC20Dispatcher { contract_address: token_address });
         self.voting_classhash.write(voting_classhash);
     }
@@ -76,7 +76,6 @@ mod factory {
             vote_id: u256,
             contest: felt252,
             start: u64,
-            token: ContractAddress,
             token_supply: u256
         ) -> ContractAddress {
             let contest_literal = self.contest_to_id.read(vote_id);
@@ -90,7 +89,7 @@ mod factory {
             contest.serialize(ref constructor_calldata);
             self.moderator.read().serialize(ref constructor_calldata);
             start.serialize(ref constructor_calldata);
-            token.serialize(ref constructor_calldata);
+            self.token.read().serialize(ref constructor_calldata);
 
             let (voting_addr, _) = deploy_syscall(
                 self.voting_classhash.read(), 0, constructor_calldata.span(), false
@@ -150,4 +149,10 @@ mod factory {
      fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
        self.contest_to_id.read(vote_id)
      }
+
+    #[external(v0)]
+    fn get_moderator(self: @ContractState) -> ContractAddress {
+        self.moderator.read()
+    }
+    
 }

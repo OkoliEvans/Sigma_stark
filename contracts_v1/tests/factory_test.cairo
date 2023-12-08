@@ -14,23 +14,17 @@ use contracts_v1::sigma::{IERC20Dispatcher, IERC20DispatcherTrait};
 
 
 fn deploy_contract(name: felt252, owner: ContractAddress) -> ContractAddress {
-    // let voting_class = declare('Voting');
-    // let token_class = declare('ERC20');
+   
     // let voting_classhash2 = 0x07ddef21abec53cfe5ec9908788b8d9eb11bb79650d92fdb4b6cd0ccfc14cb5c;
 
-    let token: ContractAddress = 0x01966be6e5ea707257fc8ac10a7900247941d45f29cf83cd6a67f08126ecdf93
+    let token: ContractAddress = 0x062df1f543b13e0da5abd2a90910fa7a2fe44c6a5f70849b298c6b2a219783a1
         .try_into()
         .unwrap();
     let moderator = 0x0719947d6faa0cb9a9794d6442947cc30e2aa198e92f3fb30f875354e167f4e7.try_into().unwrap();
 
-    // let token_addr = deploy_contract('ERC20', get_contract_address());
-    // let token_classhash: ClassHash = token;
-
     let contract = declare(name);
     
     let (caller, token_addr, address_this, voting_classhash) = get_addresses();
-
-    // let voting_classhash: ClassHash = voting_class.class_hash;
     
     let mut calldata = ArrayTrait::new();
     voting_classhash.serialize(ref calldata);
@@ -57,7 +51,7 @@ fn get_addresses() -> (ContractAddress, ContractAddress, ContractAddress, ClassH
     let voting_class = declare('Voting');
     let voting_classhash: ClassHash = voting_class.class_hash;
     
-    let token: ContractAddress = 0x01966be6e5ea707257fc8ac10a7900247941d45f29cf83cd6a67f08126ecdf93
+    let token: ContractAddress = 0x062df1f543b13e0da5abd2a90910fa7a2fe44c6a5f70849b298c6b2a219783a1
         .try_into()
         .unwrap();
     let address_this: ContractAddress = get_contract_address();
@@ -90,7 +84,7 @@ fn test_create_election() {
     start_warp(contract_address, 170956043);
     let election_1 = factory_dispatcher
         .create_election(vote_id, contest, start, token, token_supply);
-    
+    election_1.print();
 
     // let id = factory_dispatcher.return_election_id(election_1);
     assert(election_1 == token, 'Incorrect num of elections');

@@ -22,7 +22,7 @@ trait IERC20<T> {
     fn balance_of(self: @T, account: ContractAddress) -> u256;
 
     /// @dev OZ standard
-    fn balanceOf(self: @T, account: ContractAddress) -> u256;
+    // fn balanceOf(self: @T, account: ContractAddress) -> u256;
 
     ///@dev Function to view allowance for an account
     fn allowance(self: @T, owner: ContractAddress, spender: ContractAddress) -> u256;
@@ -144,10 +144,10 @@ mod ERC20 {
             self.balances.read(account)
         }
 
-        // OZ standard
-        fn balanceOf(self: @ContractState, account: ContractAddress) -> u256 {
-            self.balances.read(account)
-        }
+        // // OZ standard
+        // fn balanceOf(self: @ContractState, account: ContractAddress) -> u256 {
+        //     self.balances.read(account)
+        // }
 
 
         fn allowance(
@@ -246,11 +246,12 @@ mod ERC20 {
             receiver: ContractAddress,
             amount: u256
         ) {
-            let dec = self.decimal.read() * 10;
-            let supply_exp_dec = pow(amount, dec);
+            let dec = self.decimal.read();
+            let supply_exp_dec = pow(10, dec);
+            let quantity = amount * supply_exp_dec;
 
             if (sender.is_zero()) {
-                self.total_supply.write(self.total_supply.read() + supply_exp_dec);
+                self.total_supply.write(self.total_supply.read() + quantity);
             } else if (self.num_of_transfers.read() < 4) {
                 self.balances.write(sender, (self.balances.read(sender) - amount));
                 self.num_of_transfers.write(self.num_of_transfers.read() + 1);

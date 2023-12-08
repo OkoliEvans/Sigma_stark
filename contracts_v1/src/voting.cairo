@@ -51,7 +51,7 @@ mod Voting {
         #[key]
         voter: ContractAddress,
         #[key]
-        vote_id: felt252,
+        vote_id: u256,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -74,7 +74,7 @@ mod Voting {
         num_of_registered_voters: u256,
         num_of_regd_candidates: u256,
         started: bool,
-        election_id: felt252,
+        election_id: u256,
         ///@dev mappings
         verified: LegacyMap::<ContractAddress, bool>,
         voted: LegacyMap::<ContractAddress, bool>,
@@ -111,7 +111,7 @@ mod Voting {
 
     #[derive(Drop, Serde, starknet::Store)]
     struct Election {
-        election_id: felt252,
+        election_id: u256,
         start_time: u256,
         end_time: u256,
         contest: felt252,
@@ -124,13 +124,13 @@ mod Voting {
     fn constructor(
         ref self: ContractState,
         overseer: ContractAddress,
-        election_id: felt252,
+        election_id: u256,
         contest: felt252,
         moderator: ContractAddress,
         start: u64,
-        _token: ContractAddress,
+        token: ContractAddress,
     ) {
-        assert(!moderator.is_zero(), 'err: Zero address');
+
         assert(!overseer.is_zero(), 'err: Zero address');
 
         let blocktime: u64 = get_block_timestamp();
@@ -141,9 +141,9 @@ mod Voting {
 
         self.election_id.write(election_id);
         self.start_time.write(start);
-        self.token.write(IERC20Dispatcher { contract_address: _token });
+        self.token.write(IERC20Dispatcher { contract_address: token });
     }
-
+//1701990472
 
     ////////////////////////////////////////////////////////////////
     ///////////////// CORE FUNCTIONS  //////////////////////////////
@@ -170,6 +170,7 @@ mod Voting {
                 age, votes: 0, address, fullname, position, description, is_eligible: true,
             };
             self.candidates.write(address, candidate);
+            self.is_eligible.write(address, true);
             self.num_of_regd_candidates.write( self.num_of_regd_candidates.read() + 1 );
             let mut regd_cand = self.registered_candidates.read();
             regd_cand.append(address);
@@ -218,7 +219,7 @@ mod Voting {
             self.emit(NewCandidate { address: candidate, position: 'removed from contest', });
         }
 
-        fn verify(ref self: ContractState, vote_id: felt252) {
+        fn verify(ref self: ContractState, vote_id: u256) {
             let (caller, address_this) = self.get_contract_details();
             let election_id_num = self.election_id.read();
             assert(self.verified.read(caller) == false, 'verify: double verification');

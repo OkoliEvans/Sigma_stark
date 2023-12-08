@@ -14,6 +14,6 @@ trait IVoteFactoryTrait<TContractState> {
 
     fn return_election_id(self: @TContractState, voting_addr: ContractAddress) -> u256;
     fn change_moderator(ref self: TContractState, new_mod: ContractAddress);
-    fn return_elections(self: @TContractState, vote_id: u256) -> Array<ContractAddress>;
+    fn return_elections(self: @TContractState) -> Array<ContractAddress>;
     fn update_classhash(ref self: TContractState, classhash: ClassHash);
 }

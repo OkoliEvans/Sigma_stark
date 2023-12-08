@@ -79,9 +79,9 @@ mod factory {
             token: ContractAddress,
             token_supply: u256
         ) -> ContractAddress {
-            let contest_lit = self.contest_to_id.read(vote_id);
+            let contest_literal = self.contest_to_id.read(vote_id);
 
-            assert(vote_id != contest_lit.vote_id, 'ID taken');
+            assert(vote_id != contest_literal.vote_id, 'ID taken');
             assert(get_block_timestamp() < start, 'Invalid start time');
 
             let mut constructor_calldata = ArrayTrait::new();
@@ -120,7 +120,7 @@ mod factory {
             self.election_to_id.read(voting_addr)
         }
 
-        fn return_elections(self: @ContractState, vote_id: u256) -> Array<ContractAddress> {
+        fn return_elections(self: @ContractState ) -> Array<ContractAddress> {
             let mut election_address = ArrayTrait::new();
             let mut i: u256 = 0;
 
@@ -146,8 +146,8 @@ mod factory {
             self.voting_classhash.write(classhash);
         }
     }
-    #[external(v0)]
-    fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
-        self.contest_to_id.read(vote_id)
-    }
+     #[external(v0)]
+     fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
+       self.contest_to_id.read(vote_id)
+     }
 }

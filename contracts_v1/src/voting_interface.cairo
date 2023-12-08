@@ -12,7 +12,7 @@ trait IVotingTrait<TContractState> {
         description: felt252
     );
     fn remove_candidate(ref self: TContractState, candidate: ContractAddress);
-    fn verify(ref self: TContractState, vote_id: felt252);
+    fn verify(ref self: TContractState, vote_id: u256);
     fn start_vote(ref self: TContractState, end_time: u64);
     fn end_vote(ref self: TContractState);
     fn vote(ref self: TContractState, candidate: ContractAddress);

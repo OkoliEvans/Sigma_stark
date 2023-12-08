@@ -75,7 +75,7 @@ We highly appreciate and welcome pull requests or issues from everyone that will
 
 <br/>
 
-*Factory Contract deployed on Starknet:* **0x0047b9e8beca4a2a5d5e6ce6b51654162d98f8d7011fa37a7be0ac38c71799c2**
+*Factory Contract deployed on Starknet:* **0x01d58c47f02a078a031adc78609292f84671fed89d1a1e2494ad823f36b58594**
 
 
 

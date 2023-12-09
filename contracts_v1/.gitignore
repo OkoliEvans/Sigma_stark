@@ -1,6 +1,6 @@
 target
-account_keystore.json
-account0_acct.json 
+acct_key.json
+acct_acct.json 
 snfoundry_cache
 .snfoundry_cache
 .env

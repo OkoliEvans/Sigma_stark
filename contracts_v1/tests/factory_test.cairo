@@ -83,7 +83,7 @@ fn test_create_election() {
 
     start_warp(contract_address, 170956043);
     let election_1 = factory_dispatcher
-        .create_election(vote_id, contest, start, token, token_supply);
+        .create_election(vote_id, contest, start, token_supply);
     election_1.print();
 
     // let id = factory_dispatcher.return_election_id(election_1);

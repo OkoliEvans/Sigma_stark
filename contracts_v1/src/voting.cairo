@@ -232,7 +232,7 @@ mod Voting {
             self.num_of_registered_voters.write(self.num_of_registered_voters.read() + 1);
 
             //MINT SBT
-            self.token.read().transfer_from(address_this, caller, 1);
+            self.token.read().transfer(caller, 1);
 
             self.emit(Verified { voter: caller, vote_id, });
         }

@@ -12,6 +12,7 @@ import { IoExit } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import { IconContext } from "react-icons";
 import { useWallet } from "../context/WalletContext";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   let Anchors = [
@@ -25,6 +26,7 @@ const Navbar = () => {
     useWallet();
 
   const router = useRouter();
+  const pathname = usePathname();
 
   let [open, setOpen] = useState(false);
   let [openModal, setOpenModal] = useState(false);
@@ -57,8 +59,8 @@ const Navbar = () => {
               <Link
                 href={anchor.address}
                 className={`  border border-transparent ${
-                  router.pathname == anchor.address
-                    ? "text-[#010101] border !border-[#010101] rounded-2xl px-[24px] py-[8px]"
+                  pathname == anchor.address
+                    ? "text-[#010101] rounded-2xl px-[24px] py-[8px]"
                     : ""
                 } hover:border hover:text-[#F5F6FF] hover:bg-[#cf716e] rounded-2xl px-[24px] py-[8px] duration-500 ease-in-out`}
               >

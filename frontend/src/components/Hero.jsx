@@ -16,11 +16,11 @@ const Hero = () => {
         </p>
         <div className="flex mt-4 gap-4">
           <div className="bg-[#cf716e] text-white flex items-center justify-center rounded-lg w-36 h-12 p-4 shadow-lg cursor-pointer">
-            <Link href="getstarted">Get started</Link>
+            <Link href="get-started">Get started</Link>
           </div>
-          <div className="bg-[#FFFFFF] hover:bg-[#212529] border hover:border-none border-[#000] text-[#000] flex items-center justify-center rounded-lg w-40 h-12 p-4 shadow-lg cursor-pointer hover:text-[#FFFFFF]">
+          {/* <div className="bg-[#FFFFFF] hover:bg-[#212529] border hover:border-none border-[#000] text-[#000] flex items-center justify-center rounded-lg w-40 h-12 p-4 shadow-lg cursor-pointer hover:text-[#FFFFFF]">
             <Link href="create">Create election</Link>
-          </div>
+          </div> */}
         </div>
       </div>
 

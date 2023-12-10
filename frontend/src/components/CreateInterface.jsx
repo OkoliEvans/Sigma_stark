@@ -1,24 +1,44 @@
 "use client";
 
 import React, { useState } from "react";
+import { Contract, Provider, RpcProvider, constants } from "starknet";
+import factoryABI from "../../utils/ABI/factoryABI.json";
+import { useElectionId } from "@/context/ElectionIdContext";
+import { FactoryAddress } from "../../utils/contractAddress";
+import { useWallet } from "@/context/WalletContext";
 
 const CreateInterface = () => {
-  const [participants, setParticipants] = useState(0);
-  const [eNftName, setEnftName] = useState("");
-  const [eNftSymbol, setENftSymbol] = useState("");
-  const [image, setImage] = useState("");
-  const [description, setDescription] = useState("");
-  const [eventFee, setEventFee] = useState("");
-  const [id, setid] = useState(0);
+  const [id, setid] = useState("");
+  const [electionName, setElectionName] = useState("");
+  const [tokenSupply, setTokenSupply] = useState("");
   const [regStartDateAndTime, setRegStartDateAndTime] = useState(0);
-  const [regDeadline, setRegDeadline] = useState(0);
-  const [eventUri, setEventUri] = useState("");
-  const [eventDetails, setEventDetails] = useState({});
-  const [tokenuri, setTokenUri] = useState("");
-  const [contest, setContest] = useState("");
+  const [errorMessage, setErrorMessage] = useState();
 
-  const handleNftCreation = () => {
-    console.log();
+  const { generatedNumber } = useElectionId();
+  const { account } = useWallet();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    id != generatedNumber
+      ? setErrorMessage(
+          "Entered ID does not match the generated ID. Please try again."
+        )
+      : "";
+
+    console.log;
+
+    try {
+      const contract = new Contract(factoryABI, FactoryAddress(), account);
+      await contract.create_election(
+        Number(id),
+        electionName,
+        regStartDateAndTime,
+        Number(tokenSupply)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -36,64 +56,33 @@ const CreateInterface = () => {
           </div>
           <div className="flex md:flex-row flex-col justify-center items-center font-medium w-[100%]">
             <div className="flex justify-center items-center">
-              <form onSubmit={handleNftCreation} className="">
+              <form onSubmit={handleSubmit} className="">
                 <label>
-                  Vote ID:
+                  Election ID:
                   <br />
                   <input
                     className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2 appearance-none"
-                    type="number"
+                    type="text"
                     style={{
                       WebkitAppearance: "none",
                       MozAppearance: "textfield",
                     }}
-                    placeholder="Enter your Vote ID"
+                    value={id}
+                    placeholder="Enter your Election ID"
                     onChange={(e) => setid(e.target.value)}
                   />
+                  {errorMessage && (
+                    <div className="text-red-500 text-sm">{errorMessage}</div>
+                  )}
                 </label>
                 <label>
-                  Name:
+                  Election Name:
                   <br />
                   <input
                     className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
                     type="text"
                     placeholder="Enter Name"
-                    onChange={(e) => setEnftName(e.target.value)}
-                  />
-                </label>
-                <br />
-                <label>
-                  Vote NFT Symbol:
-                  <br />
-                  <input
-                    className="py-2 px-2 border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
-                    type="text"
-                    placeholder="Vote NFT Symbol"
-                    onChange={(e) => setENftSymbol(e.target.value)}
-                  />
-                </label>
-
-                <br />
-                <label>
-                  Token URI:
-                  <br />
-                  <input
-                    className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
-                    type="text"
-                    placeholder="Election NFT Symbol"
-                    onChange={(e) => setTokenUri(e.target.value)}
-                  />
-                </label>
-
-                <br />
-                <label>
-                  Contest Name:
-                  <br />
-                  <input
-                    className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
-                    type="text"
-                    placeholder="Event NFt sympol"
-                    onChange={(e) => setContest(e.target.value)}
+                    onChange={(e) => setElectionName(e.target.value)}
                   />
                 </label>
 
@@ -102,9 +91,9 @@ const CreateInterface = () => {
                   Election start date and time:
                   <br />
                   <input
-                    className="py-2 px-2 border text-gray-500 border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
+                    className="py-2 px-2 border  border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
                     type="datetime-local"
-                    placeholder="set reg. start date and time"
+                    placeholder="set election. start date and time"
                     onChange={(e) => {
                       const timeString = e.target.value;
                       const date = new Date(timeString);
@@ -113,22 +102,22 @@ const CreateInterface = () => {
                     }}
                   />
                 </label>
-
-                <br />
                 <label>
-                  Event image:
+                  Token Supply:
                   <br />
                   <input
-                    className="py-2 px-2 border text-gray-500 border-gray-900 bg-gray-400 rounded-lg w-full mb-2"
-                    type="file"
-                    onChange={(e) => setImage(e.target.files[0])}
+                    className="py-2 px-2 border border-gray-900 bg-gray-400 placeholder-gray-500 rounded-lg w-full mb-2"
+                    type="text"
+                    placeholder="Enter the Total Token Supply"
+                    onChange={(e) => setTokenSupply(e.target.value)}
                   />
                 </label>
+
                 <button
                   className="py-2 outline-none mt-4 w-full hover:bg-[#d18d8c] bg-[#cf716e] text-white font-semibold rounded-lg"
                   type="submit"
                 >
-                  Upload Data
+                  Create Election
                 </button>
               </form>
             </div>

@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { WalletProvider } from "../context/WalletContext";
+import { ElectionIdProvider } from "../context/ElectionIdContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,13 +24,15 @@ export default function RootLayout({
       <body className={inter.className}>
         <StarknetProvider>
           <WalletProvider>
-            <div className=" text-[#000]">
-              <Navbar />
-              <div className="pt-24 text-[#000] bg-[#f7ebeb] pb-24">
-                <main>{children}</main>
+            <ElectionIdProvider>
+              <div className=" text-[#000]">
+                <Navbar />
+                <div className="pt-24 text-[#000] bg-[#f7ebeb] pb-24">
+                  <main>{children}</main>
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
+            </ElectionIdProvider>
           </WalletProvider>
         </StarknetProvider>
       </body>

@@ -28,19 +28,7 @@
         "inputs": [
           {
             "name": "vote_id",
-            "type": "core::felt252"
-          },
-          {
-            "name": "name",
-            "type": "core::felt252"
-          },
-          {
-            "name": "symbol",
-            "type": "core::felt252"
-          },
-          {
-            "name": "token_uri",
-            "type": "core::felt252"
+            "type": "core::integer::u256"
           },
           {
             "name": "contest",
@@ -49,10 +37,6 @@
           {
             "name": "start",
             "type": "core::integer::u64"
-          },
-          {
-            "name": "token",
-            "type": "core::starknet::contract_address::ContractAddress"
           },
           {
             "name": "token_supply",
@@ -77,7 +61,7 @@
         ],
         "outputs": [
           {
-            "type": "core::felt252"
+            "type": "core::integer::u256"
           }
         ],
         "state_mutability": "view"
@@ -95,14 +79,21 @@
         "state_mutability": "external"
       },
       {
-        "name": "return_elections",
+        "name": "update_classhash",
         "type": "function",
         "inputs": [
           {
-            "name": "vote_id",
-            "type": "core::felt252"
+            "name": "classhash",
+            "type": "core::starknet::class_hash::ClassHash"
           }
         ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "return_elections",
+        "type": "function",
+        "inputs": [],
         "outputs": [
           {
             "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>"
@@ -123,6 +114,10 @@
       {
         "name": "voting_classhash",
         "type": "core::starknet::class_hash::ClassHash"
+      },
+      {
+        "name": "moderator",
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ]
   },
@@ -146,7 +141,7 @@
     "members": [
       {
         "name": "vote_id",
-        "type": "core::felt252"
+        "type": "core::integer::u256"
       },
       {
         "name": "is_id_registered",
@@ -172,12 +167,23 @@
     "inputs": [
       {
         "name": "vote_id",
-        "type": "core::felt252"
+        "type": "core::integer::u256"
       }
     ],
     "outputs": [
       {
         "type": "contracts_v1::factory::factory::Contest"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_moderator",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ],
     "state_mutability": "view"

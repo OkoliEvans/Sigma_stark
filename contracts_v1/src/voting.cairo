@@ -16,7 +16,7 @@ trait IERC20<T> {
 /// @title An on-chain voting system that only allows verified ctizens to vote, mitigating fraud and double voting.
 /// @author Okoli Evans, Roqeeb Bello, Olorunfemi Babalola Samuel
 /// @notice For open and trusted voting system that allows only verified accounts to access vote function. Vote results are returned in real time.
-/// @dev Restricts access to 'Controller', 'Agents' and actual voters. Returns vote counts autonomously to the frontend via interval calls
+/// @dev Restricts access to 'Controller', 'Agents' and actual voters. Returns vote counts automatically to the frontend via interval calls, auto collation of votes 
 
 mod Voting {
     ///     USE SOULBOUND TOKEN AS PASS

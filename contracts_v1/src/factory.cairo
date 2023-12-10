@@ -20,6 +20,8 @@ mod factory {
     use core::serde::Serde;
     use array::ArrayTrait;
     use super::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use alexandria_storage::list::{IndexView, ListTrait, List};
+
 
     ///@dev events to emit at various ops
     #[event]
@@ -45,6 +47,7 @@ mod factory {
         election_to_id: LegacyMap::<ContractAddress, u256>,
         contest_to_id: LegacyMap::<u256, Contest>,
         election_addresses: LegacyMap::<u256, ContractAddress>,
+        elections: List<ContractAddress>,
     }
 
     #[derive(Copy, Drop, Serde, starknet::Store)]
@@ -58,9 +61,11 @@ mod factory {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, token_address: ContractAddress, voting_classhash: ClassHash, moderator: ContractAddress
+        ref self: ContractState,
+        token_address: ContractAddress,
+        voting_classhash: ClassHash,
+        moderator: ContractAddress
     ) {
-     
         assert(token_address.is_non_zero(), 'const: Zero address for token');
 
         self.moderator.write(moderator);
@@ -72,11 +77,7 @@ mod factory {
     #[external(v0)]
     impl VoteFactoryImpl of IVoteFactoryTrait<ContractState> {
         fn create_election(
-            ref self: ContractState,
-            vote_id: u256,
-            contest: felt252,
-            start: u64,
-            token_supply: u256
+            ref self: ContractState, vote_id: u256, contest: felt252, start: u64, token_supply: u256
         ) -> ContractAddress {
             let contest_literal = self.contest_to_id.read(vote_id);
 
@@ -110,6 +111,8 @@ mod factory {
             self.election_addresses.write(vote_id, voting_addr);
             self.token.read().transfer(voting_addr, token_supply);
 
+            let mut election = self.elections.read();
+            election.append(voting_addr);
             self.emit(Create_election { voting_addr, overseer: get_caller_address(), });
 
             return voting_addr;
@@ -117,20 +120,6 @@ mod factory {
 
         fn return_election_id(self: @ContractState, voting_addr: ContractAddress) -> u256 {
             self.election_to_id.read(voting_addr)
-        }
-
-        fn return_elections(self: @ContractState ) -> Array<ContractAddress> {
-            let mut election_address = ArrayTrait::new();
-            let mut i: u256 = 0;
-
-            loop {
-                if self.num_of_elections.read() < i {
-                    break;
-                }
-                election_address.append(self.election_addresses.read(i));
-                i += 1;
-            };
-            election_address
         }
 
         fn change_moderator(ref self: ContractState, new_mod: ContractAddress) {
@@ -144,15 +133,29 @@ mod factory {
             assert(caller == self.moderator.read(), 'unauthorized caller');
             self.voting_classhash.write(classhash);
         }
+        fn return_elections(self: @ContractState) -> Array<ContractAddress> {
+            let election = self.elections.read();
+            let mut returned_elections = ArrayTrait::new();
+            let mut i:u32 = 0;
+            loop {
+                if i >= election.len() {
+                    break;
+                }
+                returned_elections.append(election[i]);
+                i += 1;
+            };
+            returned_elections
+        }
     }
-     #[external(v0)]
-     fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
-       self.contest_to_id.read(vote_id)
-     }
+
+
+    #[external(v0)]
+    fn return_contest(self: @ContractState, vote_id: u256) -> Contest {
+        self.contest_to_id.read(vote_id)
+    }
 
     #[external(v0)]
     fn get_moderator(self: @ContractState) -> ContractAddress {
         self.moderator.read()
     }
-    
 }

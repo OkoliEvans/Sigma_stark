@@ -5,7 +5,6 @@ import { BsPersonLinesFill } from "react-icons/bs";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
 import { IoMdArrowDroprightCircle } from "react-icons/io";
 import { IconContext } from "react-icons";
-//import VerifyId from "../../../components/modals/VerifyId";
 
 const Accordion = ({ items, selectedOption, onOptionChange }) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -68,11 +67,9 @@ const Accordion = ({ items, selectedOption, onOptionChange }) => {
 const Voting = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isChecked, setChecked] = useState(false);
-  const [isVerifyIdModalOPen, setIsVerifyIdModalOPen] = useState(false);
 
   const handleCheckboxChange = () => {
     setChecked(!isChecked);
-    setIsVerifyIdModalOPen(true);
   };
 
   const handleOptionChange = (option) => {
@@ -85,15 +82,11 @@ const Voting = () => {
     console.log("Selected Option:", selectedOption);
   };
 
-  const closeVerifyIdModal = () => {
-    setIsVerifyIdModalOPen(false);
-  };
-
   const accordionItems = [
     {
       header: (
         <div className="grid grid-cols-3 gap-80 mb-4">
-          <div>Baburao</div>
+          <div>Ego</div>
           <div>President</div>
           <div>
             <IconContext.Provider value={{ color: "black", size: "1.5rem" }}>
@@ -105,10 +98,10 @@ const Voting = () => {
       content: (
         <div className=" flex flex-col justify-start items-start">
           <div>
-            <strong>Name:</strong> John Doe
+            <strong>Name:</strong> Ego Esther
           </div>
           <div>
-            <strong>Adress:</strong> John Doe
+            <strong>Adress:</strong>
           </div>
           <div>
             <strong>Age:</strong> 30
@@ -117,7 +110,7 @@ const Voting = () => {
             <strong>Position:</strong> President
           </div>
           <div>
-            <strong>Description:</strong> Bachelor's in Computer Science
+            <strong>Description:</strong> Bachelors in Computer Science
           </div>
         </div>
       ),
@@ -125,7 +118,7 @@ const Voting = () => {
     {
       header: (
         <div className="grid grid-cols-3 gap-80 mb-4">
-          <div>Baburao</div>
+          <div>Mayowa</div>
           <div>President</div>
           <div>
             <IconContext.Provider value={{ color: "black", size: "1.5rem" }}>
@@ -137,42 +130,10 @@ const Voting = () => {
       content: (
         <div className=" flex flex-col justify-start items-start">
           <div>
-            <strong>Name:</strong> John Doe
+            <strong>Name:</strong> Mayowa Obisesan
           </div>
           <div>
-            <strong>Adress:</strong> John Doe
-          </div>
-          <div>
-            <strong>Age:</strong> 30
-          </div>
-          <div>
-            <strong>Position:</strong> President
-          </div>
-          <div>
-            <strong>Description:</strong> Bachelor's in Computer Science
-          </div>
-        </div>
-      ),
-    },
-    {
-      header: (
-        <div className="grid grid-cols-3 gap-80 mb-4">
-          <div>Baburao</div>
-          <div>President</div>
-          <div>
-            <IconContext.Provider value={{ color: "black", size: "1.5rem" }}>
-              <BsPersonLinesFill />
-            </IconContext.Provider>
-          </div>
-        </div>
-      ),
-      content: (
-        <div className=" flex flex-col justify-start items-start">
-          <div>
-            <strong>Name:</strong> John Doe
-          </div>
-          <div>
-            <strong>Adress:</strong> John Doe
+            <strong>Adress:</strong>
           </div>
           <div>
             <strong>Age:</strong> 30
@@ -181,7 +142,7 @@ const Voting = () => {
             <strong>Position:</strong> President
           </div>
           <div>
-            <strong>Description:</strong> Bachelor's in Computer Science
+            <strong>Description:</strong> Bachelors in Computer Science
           </div>
         </div>
       ),
@@ -221,7 +182,6 @@ const Voting = () => {
             >
               Vote
             </button>
-            {isVerifyIdModalOPen && <VerifyId onClose={closeVerifyIdModal} />}
           </form>
         </div>
       </div>

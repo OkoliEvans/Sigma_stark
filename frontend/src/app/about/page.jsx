@@ -84,13 +84,13 @@ const CreatorProfile = () => {
                 <span className=" text-xs font-normal text-[#b2605e]">
                   Contest:
                 </span>{" "}
-                Babalola
+                Governor Cohort 09
               </p>
               <p className=" text-lg font-bold text-gray-700">
                 <span className=" text-xs font-normal text-[#b2605e]">
                   Overseer:
                 </span>{" "}
-                G.O
+                0x06....0eff
               </p>
               <div className=" flex flex-row gap-8">
                 <p className=" text-lg font-bold text-gray-700">
@@ -108,28 +108,27 @@ const CreatorProfile = () => {
               </div>
               <p className=" text-lg font-bold text-gray-700">
                 <span className=" text-xs font-normal text-[#b2605e]">
-                  End Time
+                  End Time:
                 </span>
-                : 10
+                24-May-2024
               </p>
               <p className=" text-lg font-bold text-gray-700">
                 <span className=" text-xs font-normal text-[#b2605e]">
                   Total Candidates:
                 </span>{" "}
-                67
+                2
               </p>
               <div className=" flex flex-row gap-8">
                 <p className=" text-lg font-bold text-gray-700">
                   <span className=" text-xs font-normal text-[#b2605e]">
                     Total Votes:
                   </span>{" "}
-                  78999
+                  1
                 </p>
                 <p className=" text-lg font-bold text-gray-700">
                   <span className=" text-xs font-normal text-[#b2605e]">
                     Winner:
                   </span>{" "}
-                  Segun Sege
                 </p>
               </div>
             </div>

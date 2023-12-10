@@ -43,7 +43,7 @@ const GetStarted = () => {
             and secure elections and campaigns.
           </p>
           <p>
-            At Sigmastark, we're dedicated to providing a seamless and
+            At Sigmastark, we are dedicated to providing a seamless and
             trustworthy experience for your electoral needs.
           </p>
         </div>
@@ -68,8 +68,8 @@ const GetStarted = () => {
             Participate in Ongoing Elections
           </h2>
           <p className="mb-4">
-            If you're not looking to create an election but want to actively
-            participate, simply head to the "Votes" page. There, you can browse
+            If you are not looking to create an election but want to actively
+            participate, simply head to the Votes page. There, you can browse
             and join ongoing elections, making your voice heard in important
             decisions.
           </p>

@@ -46,7 +46,7 @@ const UserOrVoter = () => {
     };
 
     getElectionsOverseer();
-  }, [overseer]);
+  }, [overseer, apiKey, params.slug]);
 
   console.log("address", address);
   console.log("overseer", overseer);

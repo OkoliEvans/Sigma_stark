@@ -45,7 +45,7 @@ const ElectionList = ({ electionAddress }) => {
     };
 
     getElectionsId();
-  }, []);
+  }, [apiKey, electionAddress]);
 
   console.log("retrievedDetails", retrievedElectionsDetails);
   console.log("overseer", overseer);

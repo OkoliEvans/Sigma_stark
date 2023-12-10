@@ -75,7 +75,7 @@ We highly appreciate and welcome pull requests or issues from everyone that will
 
 <br/>
 
-*Factory Contract deployed on Starknet:* **0x02e7680df62049ce2d238830ea7f11fe603409052951430050c6e3a58be6f5a3** </br>
+*Factory Contract deployed on Starknet:* **0x03d499bbe9a1f95e49c03275dd772b84f6aa41d529a4e931c449999e65e58789** </br>
 *SMX token deployed on Starknet:* **0x062df1f543b13e0da5abd2a90910fa7a2fe44c6a5f70849b298c6b2a219783a1**
 
 **Note:** SMX token is a limited transaction token only meant for gatekeeping on voting systems, and as such does not have any monetary value.

@@ -1,0 +1,220 @@
+[
+  {
+    "name": "VoteFactoryImpl",
+    "type": "impl",
+    "interface_name": "contracts_v1::factory_interface::IVoteFactoryTrait"
+  },
+  {
+    "name": "core::integer::u256",
+    "type": "struct",
+    "members": [
+      {
+        "name": "low",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "high",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "name": "contracts_v1::factory_interface::IVoteFactoryTrait",
+    "type": "interface",
+    "items": [
+      {
+        "name": "create_election",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "vote_id",
+            "type": "core::integer::u256"
+          },
+          {
+            "name": "contest",
+            "type": "core::felt252"
+          },
+          {
+            "name": "start",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "token_supply",
+            "type": "core::integer::u256"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "name": "return_election_id",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "voting_addr",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "name": "change_moderator",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "new_mod",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "update_classhash",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "classhash",
+            "type": "core::starknet::class_hash::ClassHash"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "return_elections",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::array::Array::<core::starknet::contract_address::ContractAddress>"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "name": "constructor",
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "token_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "voting_classhash",
+        "type": "core::starknet::class_hash::ClassHash"
+      },
+      {
+        "name": "moderator",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "name": "core::bool",
+    "type": "enum",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "name": "contracts_v1::factory::factory::Contest",
+    "type": "struct",
+    "members": [
+      {
+        "name": "vote_id",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "is_id_registered",
+        "type": "core::bool"
+      },
+      {
+        "name": "overseer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "election",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "contest",
+        "type": "core::felt252"
+      }
+    ]
+  },
+  {
+    "name": "return_contest",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "vote_id",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "contracts_v1::factory::factory::Contest"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_moderator",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "kind": "struct",
+    "name": "contracts_v1::factory::factory::Create_election",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "voting_addr",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "overseer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "enum",
+    "name": "contracts_v1::factory::factory::Event",
+    "type": "event",
+    "variants": [
+      {
+        "kind": "nested",
+        "name": "Create_election",
+        "type": "contracts_v1::factory::factory::Create_election"
+      }
+    ]
+  }
+]

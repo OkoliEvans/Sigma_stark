@@ -1,0 +1,342 @@
+[
+  {
+    "name": "VoteTraitImpl",
+    "type": "impl",
+    "interface_name": "contracts_v1::voting_interface::IVotingTrait"
+  },
+  {
+    "name": "core::integer::u256",
+    "type": "struct",
+    "members": [
+      {
+        "name": "low",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "high",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "name": "contracts_v1::voting_interface::IVotingTrait",
+    "type": "interface",
+    "items": [
+      {
+        "name": "get_total_votes",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "name": "add_candidate",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "age",
+            "type": "core::felt252"
+          },
+          {
+            "name": "address",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "fullname",
+            "type": "core::felt252"
+          },
+          {
+            "name": "position",
+            "type": "core::felt252"
+          },
+          {
+            "name": "description",
+            "type": "core::felt252"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "remove_candidate",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "candidate",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "verify",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "vote_id",
+            "type": "core::integer::u256"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "start_vote",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "end_vote",
+        "type": "function",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "vote",
+        "type": "function",
+        "inputs": [
+          {
+            "name": "candidate",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "name": "get_overseer",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "name": "get_total_candidates",
+        "type": "function",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "name": "constructor",
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "overseer",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "election_id",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "contest",
+        "type": "core::felt252"
+      },
+      {
+        "name": "moderator",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "start",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "token",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "name": "core::bool",
+    "type": "enum",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "name": "contracts_v1::voting::Voting::Candidate",
+    "type": "struct",
+    "members": [
+      {
+        "name": "age",
+        "type": "core::felt252"
+      },
+      {
+        "name": "votes",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "fullname",
+        "type": "core::felt252"
+      },
+      {
+        "name": "position",
+        "type": "core::felt252"
+      },
+      {
+        "name": "description",
+        "type": "core::felt252"
+      },
+      {
+        "name": "is_eligible",
+        "type": "core::bool"
+      }
+    ]
+  },
+  {
+    "name": "display_winner",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "contracts_v1::voting::Voting::Candidate"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "contracts_v1::voting::Voting::Election",
+    "type": "struct",
+    "members": [
+      {
+        "name": "election_id",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "start_time",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "end_time",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "contest",
+        "type": "core::felt252"
+      },
+      {
+        "name": "started",
+        "type": "core::bool"
+      }
+    ]
+  },
+  {
+    "name": "display_election",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "contracts_v1::voting::Voting::Election"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "kind": "struct",
+    "name": "contracts_v1::voting::Voting::NewCandidate",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "position",
+        "type": "core::felt252"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "contracts_v1::voting::Voting::Verified",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "voter",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "vote_id",
+        "type": "core::integer::u256"
+      }
+    ]
+  },
+  {
+    "kind": "struct",
+    "name": "contracts_v1::voting::Voting::Voted",
+    "type": "event",
+    "members": [
+      {
+        "kind": "key",
+        "name": "voter",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "kind": "key",
+        "name": "candidate",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "kind": "enum",
+    "name": "contracts_v1::voting::Voting::Event",
+    "type": "event",
+    "variants": [
+      {
+        "kind": "nested",
+        "name": "NewCandidate",
+        "type": "contracts_v1::voting::Voting::NewCandidate"
+      },
+      {
+        "kind": "nested",
+        "name": "Verified",
+        "type": "contracts_v1::voting::Voting::Verified"
+      },
+      {
+        "kind": "nested",
+        "name": "Voted",
+        "type": "contracts_v1::voting::Voting::Voted"
+      }
+    ]
+  }
+]
